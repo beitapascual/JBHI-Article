@@ -1,0 +1,26 @@
+{
+  "navigator": [["cohorts","Cohorts and protocol"],["preprocessing","EEG preprocessing"],["capacity","Capacity normalization"],["connectivity","Functional connectivity"],["graph","Graph metrics"],["inference","Statistical analysis"],["glossary","Glossary"]],
+  "definitions": [
+    ["AEC", "Amplitude envelope correlation across EEG sensors."],
+    ["CAR", "Common average reference, calculated over the recorded channels."],
+    ["CBT", "Corsi Block-Tapping Test of visuospatial short-term memory."],
+    ["CL", "Cognitive load. Here the four classes operationalize relative task demand."],
+    ["Cᴳ", "Shannon graph complexity. It combines normalized edge-weight entropy and weight dispersion."],
+    ["CPL / CC", "Characteristic path length / weighted clustering coefficient."],
+    ["EOG / EMG", "Electrooculography / electromyography."],
+    ["F / P", "Frontal / parietal. These are EEG sensor regions."],
+    ["FDR", "False discovery rate. Adjusted p values use Benjamini–Hochberg."],
+    ["ICA", "Independent component analysis."],
+    ["k / L / S", "Item serial position / sequence length / highest successfully reproduced sequence length."],
+    ["kᵢ / Q", "Node strength / weighted modularity."],
+    ["r", "Unsigned paired Wilcoxon effect size."]
+  ],
+  "pipeline": {
+    "experiment": "The digital Corsi Block-Tapping task displayed a sequence of illuminated blocks for 500 ms each with a reported 1,000 ms interstimulus interval. Participants then clicked the blocks in the same order. In the older-adult cohort, a level comprised two trials and progression required one success. In the young-adult cohort, a level comprised three series of three trials, with at least two successes per series and all three series passed. In the older-adult cohort, 56 participants completed all nine sessions and four contributed fewer. All available valid recordings were retained. Ethics approval was PI 23-3325 and participants provided written informed consent.",
+    "preprocessing": "The reported pipeline applied a 0.5–60 Hz zero-phase Hamming-window FIR passband (order 1,000) and 49–51 Hz notch. Five parallel bands were theta (4–8 Hz), alpha (8–13 Hz), low beta (13–20 Hz), high beta (20–30 Hz) and gamma (30–60 Hz). Signals were common-average referenced per recording. Broadband EEG provided the rejection mask. An item-locked one-second epoch was rejected when at least two samples on at least one channel exceeded four standard deviations. The code also documents normalization of clean epochs. Main connectivity results use epochs from successfully completed trials.",
+    "capacity": "For each participant, S is the maximum sequence length successfully reproduced in the same sessions included in EEG analysis. The EEG features did not enter this definition. For an item at position k, the ratio k/S assigns it to one of four successive quarters. Items above S remain unclassified. The highest demonstrated performance can differ from typical capacity and the class rule retains a dependence on task position.",
+    "aec": "Analytic EEG signals were obtained by Hilbert transform within each band. Pairwise orthogonalization removes instantaneous shared components before correlating amplitude envelopes. The weighted 16 × 16 sensor network has 120 unique off-diagonal edges. The published code uses a symmetric unsigned estimate. Orthogonalization mitigates zero-lag mixing while potentially removing genuine zero-lag coupling. One-second windows retain item alignment. Delta was excluded under the study’s four-cycle criterion.",
+    "regions": "The listed frontal electrodes were F7, F3, Fz, F4 and F8 in the older-adult cohort, and F7, F3, Fz and F4 in the young-adult cohort. The parietal set was P3, Pz and P4 in both. The acquisition montages contain 16 channels in each dataset. Both cohorts were common-average referenced for analysis despite their different acquisition references.",
+    "inference": "For each dataset, inference uses one metric per participant × class × band × region. Shapiro–Wilk was used to assess distributions and paired two-sided Wilcoxon signed-rank tests compared the same participants across class pairs. The revised main analysis defined 300 comparisons per cohort (5 metrics × 5 bands × 2 regions × 6 contrasts), with separate Benjamini–Hochberg FDR correction at 0.05. Unequal epoch counts may affect precision without multiplying paired observations. Main analyses report all four classes for all 60 and 21 participants, respectively."
+  }
+}

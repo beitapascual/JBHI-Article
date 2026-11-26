@@ -1,0 +1,39 @@
+---
+import Site from '../../layouts/Site.astro';
+import PageHead from '../../components/PageHead.astro';
+import FilterBar from '../../components/FilterBar.astro';
+import Icon from '../../components/Icon.astro';
+import analyses from '../../data/analyses.json';
+import { figures, figureLabel, route, science, tableLabel, tableNotes } from '../../data/figures';
+const main = Object.keys(figures).filter(key => key.startsWith('f'));
+const supplementary = Object.keys(figures).filter(key => key.startsWith('s')).sort((a,b) => Number(a.slice(1)) - Number(b.slice(1)));
+const tableKeys = Object.keys(tableNotes).filter(key => key.startsWith('table-'));
+const rows = [...main, ...supplementary, ...tableKeys].map(key => {
+  const table = key.startsWith('table-');
+  const category = table ? 'Tables' : key.startsWith('s') ? 'Supplementary figures' : 'Manuscript figures';
+  const analysis = analyses.find(item => item.figures.includes(key) || item.tables.includes(key));
+  const link = [ 'f1','f2' ].includes(key) ? 'methods/' : key.startsWith('f') ? 'findings/' : `analyses/${analysis?.slug}/`;
+  const figure = figures[key];
+  return {
+    key, category, link, title: table ? tableNotes[key].title : figure.title,
+    label: table ? tableLabel(key) : figureLabel(key),
+    context: category === 'Manuscript figures' ? (link === 'methods/' ? 'Methods' : 'Main findings') : analysis?.title,
+    unavailable: !table && !figure.asset,
+    thumbnail: !table && figure.asset ? key : null
+  };
+});
+---
+<Site title="Figures and tables" active="figures/">
+  <PageHead label="Research materials" title="Figures and tables" description="Find an item by identifier, title or analysis. Each entry opens the figure or table in its scientific context." />
+  <section class="wrap section browse-section" aria-label="Search figures and tables" data-filter-scope>
+    <FilterBar categories={['Manuscript figures','Supplementary figures','Tables']} placeholder="Search figures or tables" noun="items" count={rows.length} />
+    <div class="index-list">
+      {rows.map(item => <article class="index-row" data-filter-item data-category={item.category} data-search={[item.key, item.label, item.title, item.context].join(' ')}>
+        <div class="index-thumb">{item.thumbnail ? <img src={science(item.thumbnail + '-thumb.webp')} alt="" loading="lazy" /> : <Icon name="file" />}</div>
+        <div><span class="eyebrow">{item.label}</span><h2><a href={route(item.link + '#' + item.key)}>{item.title}</a></h2><p>{item.context}</p></div>
+        {item.unavailable && <span class="availability">Asset unavailable</span>}
+      </article>)}
+    </div>
+    <div class="empty" data-filter-empty hidden><h2>No matching items</h2><button type="button" class="button outline" data-filter-reset>Clear filters</button></div>
+  </section>
+</Site>

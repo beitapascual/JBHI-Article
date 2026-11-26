@@ -1,0 +1,69 @@
+---
+import Site from '../../layouts/Site.astro';
+import PageHead from '../../components/PageHead.astro';
+import Figure from '../../components/Figure.astro';
+import DataTable from '../../components/DataTable.astro';
+import Equation from '../../components/Equation.astro';
+import GraphMetricFormulas from '../../components/GraphMetricFormulas.astro';
+import Callout from '../../components/Callout.astro';
+import methods from '../../data/methods.json';
+import study from '../../data/study.json';
+import { route } from '../../data/figures';
+const p = methods.pipeline;
+---
+<Site title="Methods and reproducibility" active="methods/">
+  <PageHead label="Study protocol" title="Methods and reproducibility" description="From Corsi sequence encoding and EEG preprocessing to capacity-normalized labels, connectivity and paired inference." />
+  <div class="wrap detail-grid">
+    <aside class="toc"><nav aria-label="Methods on this page"><strong>On this page</strong>{methods.navigator.map(([key, label]) => <a href={'#'+key}>{label}</a>)}</nav></aside>
+    <div class="reading">
+      <section class="reading-section" id="cohorts"><h2>Cohorts and protocol</h2><p>{p.experiment}</p><DataTable title="Cohort characteristics" heading={['Characteristic', study.cohortLabels.older, study.cohortLabels.young]} rows={study.cohortData} /><Figure id="f1" /></section>
+      <section class="reading-section" id="preprocessing"><h2>EEG preprocessing</h2><p>{p.preprocessing}</p><p class="link-group"><a href={route('analyses/epoch-distribution/')}>Clean-epoch availability</a><a href={route('analyses/ica-sensitivity/')}>ICA sensitivity</a></p></section>
+      <section class="reading-section" id="capacity">
+        <h2>Capacity normalization</h2><p>{p.capacity}</p>
+        <Equation tex={String.raw`\operatorname{Class}(k;S)=\left\lceil\frac{4k}{S}\right\rceil,\qquad 1\le k\le S`} />
+        <div class="interactive-panel" data-capacity>
+          <h3>Explore the class rule</h3>
+          <p>Select an illustrative span S. Each item shows its class from the equation, as in manuscript Table II.</p>
+          <div class="selects" data-cap-controls hidden><label>Illustrative Corsi span<select data-span>{Array.from({length:8}, (_,i) => i+2).map(n => <option selected={n===8}>{n}</option>)}</select></label></div>
+          <ol class="capacity-grid" aria-label="Class by position" data-classes>
+            {Array.from({length:8},(_,i) => <li data-class={Math.ceil((i+1)/2)}><span>Item {i+1}</span><strong>C{Math.ceil((i+1)/2)}</strong></li>)}
+          </ol>
+          <a href={route('analyses/sequence-length/')}>Sequence length at fixed position</a>
+        </div>
+        <Figure id="f2" />
+      </section>
+      <section class="reading-section" id="connectivity"><h2>Functional connectivity</h2><p>{p.aec}</p><p>{p.regions}</p><p><a href={route('analyses/bootstrap-stability/')}>Bootstrap evaluation of averaged theta connectivity</a></p></section>
+      <section class="reading-section" id="graph">
+        <h2>Graph metrics</h2>
+        <GraphMetricFormulas />
+        <Callout tone="scope" title="Implementation to verify"><p>The current public script averages epoch-level AEC matrices by participant, class and band before applying regional masks and computing graph metrics. Its electrode sets also differ from the sets listed above. The manuscript describes averaging node-level metrics over region electrodes, and the repository guide describes epoch-level metric aggregation. These procedures can yield different values. Confirm the exact analysis version before treating the public script as a reproduction of the displayed results.</p></Callout>
+      </section>
+      <section class="reading-section" id="inference"><h2>Statistical analysis</h2><p>{p.inference}</p><Equation tex={String.raw`r=\frac{|z|}{\sqrt{n}}`} /><p>Here z is the standardized signed-rank statistic and n the number of valid participant pairs. The study uses r &gt; 0.3 and r &gt; 0.5 as conventional medium and large effect thresholds.</p><p><a href={route('resources/')}>Public code and data availability</a></p></section>
+      <section class="reading-section" id="glossary"><h2>Glossary</h2><dl class="definitions">{methods.definitions.map(([term, description]) => <div><dt>{term}</dt><dd>{description}</dd></div>)}</dl></section>
+    </div>
+  </div>
+<script>
+  const demo = document.querySelector<HTMLElement>('[data-capacity]');
+  if (demo) {
+    const select = demo.querySelector<HTMLSelectElement>('[data-span]')!;
+    const list = demo.querySelector<HTMLOListElement>('[data-classes]')!;
+    select.addEventListener('change', () => {
+      const span = Number(select.value);
+      const items = Array.from({length: span}, (_, index) => {
+        const position = index + 1;
+        const category = String(Math.ceil(4 * position / span));
+        const item = document.createElement('li');
+        item.dataset.class = category;
+        const label = document.createElement('span');
+        label.textContent = 'Item ' + position;
+        const value = document.createElement('strong');
+        value.textContent = 'C' + category;
+        item.append(label, value);
+        return item;
+      });
+      list.replaceChildren(...items);
+    });
+    demo.querySelector<HTMLElement>('[data-cap-controls]')!.hidden = false;
+  }
+</script>
+</Site>

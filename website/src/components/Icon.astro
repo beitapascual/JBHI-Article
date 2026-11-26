@@ -1,0 +1,18 @@
+---
+const { name, size = 20 } = Astro.props;
+const icons: Record<string, string> = {
+  pulse: 'M2 12h4l2.3-6 3.5 12 3-9 2 3H22',
+  grid: 'M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z',
+  layers: 'm12 3 9 5-9 5-9-5 9-5z M3 12l9 5 9-5 M3 16l9 5 9-5',
+  users: 'M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8 M22 21v-2a4 4 0 0 0-3-4 M16 3a4 4 0 0 1 0 8',
+  clock: 'M22 12a10 10 0 1 1-20 0 10 10 0 1 1 20 0 M12 6v6l4 2',
+  search: 'M16 10a6 6 0 1 1-12 0 6 6 0 0 1 12 0z M15 15l5 5',
+  zoom: 'M8 3H3v5 M16 3h5v5 M8 21H3v-5 M16 21h5v-5',
+  download: 'M12 3v12 M7 10l5 5 5-5 M4 16v5h16v-5',
+  close: 'm6 6 12 12 M18 6 6 18',
+  menu: 'M4 6h16 M4 12h16 M4 18h16',
+  file: 'M14 2H5v20h14V7z M14 2v6h5 M8 13h8 M8 17h8',
+  circle: 'M22 12a10 10 0 1 1-20 0 10 10 0 1 1 20 0 M12 8v.1 M12 11v5'
+};
+---
+<svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d={icons[name]} /></svg>

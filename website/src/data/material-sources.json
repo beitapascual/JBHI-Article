@@ -1,0 +1,138 @@
+{
+  "figures": {
+    "f1": {
+      "source": "materials/Fig.1.jpg",
+      "file": "f1.jpg"
+    },
+    "f2": {
+      "source": "materials/Fig.2.jpg",
+      "file": "f2.jpg"
+    },
+    "f3": {
+      "source": "materials/Fig.3.png",
+      "file": "f3.png"
+    },
+    "f4": {
+      "source": "materials/Fig.4.png",
+      "file": "f4.png"
+    },
+    "f5": {
+      "source": "materials/Fig.5.png",
+      "file": "f5.png"
+    },
+    "f6": {
+      "source": "materials/Fig.6.png",
+      "file": "f6.png"
+    },
+    "s1": {
+      "source": "materials/Fig.S1.png",
+      "file": "s1.png"
+    },
+    "s2": {
+      "source": "materials/Fig.S2.png",
+      "file": "s2.png"
+    },
+    "s3": {
+      "source": "materials/Fig.S3.png",
+      "file": "s3.png"
+    },
+    "s4": {
+      "source": "materials/Fig.S4.png",
+      "file": "s4.png"
+    },
+    "s5": {
+      "source": "materials/Fig.S5.png",
+      "file": "s5.png"
+    },
+    "s6": {
+      "source": "materials/Fig.S6.png",
+      "file": "s6.png"
+    },
+    "s7": {
+      "source": "materials/Fig.S7.png",
+      "file": "s7.png"
+    },
+    "s8": {
+      "source": "materials/Fig.S8.png",
+      "file": "s8.png"
+    },
+    "s9": {
+      "source": "materials/Fig.S9.png",
+      "file": "s9.png"
+    },
+    "s10": {
+      "source": "materials/Fig.S10.png",
+      "file": "s10.png"
+    },
+    "s11": {
+      "source": "materials/Fig.S11.png",
+      "file": "s11.png"
+    },
+    "s12": {
+      "source": "materials/Fig.S12.png",
+      "file": "s12.png"
+    },
+    "s13": {
+      "source": "materials/Fig.S13.png",
+      "file": "s13.png"
+    },
+    "s14": {
+      "source": "materials/Fig.S14.png",
+      "file": "s14.png"
+    },
+    "s15": {
+      "source": "materials/Fig.S15.png",
+      "file": "s15.png"
+    },
+    "s16": {
+      "source": "materials/Fig.S16.png",
+      "file": "s16.png"
+    },
+    "s17": {
+      "source": "materials/Fig.S17.png",
+      "file": "s17.png"
+    },
+    "s18": {
+      "source": "materials/Fig.S18.png",
+      "file": "s18.png"
+    }
+  },
+  "tables": {
+    "epochs-older": {
+      "source": "materials/Detailed clean epoch counts – Older-adult dataset.xlsx",
+      "file": "epochs-older.xlsx"
+    },
+    "table-s1": {
+      "source": "materials/Table.S1.csv",
+      "file": "table-s1.csv"
+    },
+    "table-s2": {
+      "source": "materials/Table.S2.csv",
+      "file": "table-s2.csv"
+    },
+    "epochs-young": {
+      "source": "materials/Detailed clean epoch counts – Young-adult dataset.xlsx",
+      "file": "epochs-young.xlsx"
+    },
+    "table-s3": {
+      "source": "materials/Table.S3.csv",
+      "file": "table-s3.csv"
+    },
+    "table-s4": {
+      "source": "materials/Table.S4.csv",
+      "file": "table-s4.csv"
+    },
+    "ica-contrasts": {
+      "source": "materials/Detailed statistical results – Shannon graph complexity before and after ICA correction in the older-adult dataset.xlsx",
+      "file": "ica-contrasts.xlsx"
+    },
+    "table-s5": {
+      "source": "materials/Table.S5.xlsx",
+      "file": "table-s5.xlsx"
+    },
+    "table-s6": {
+      "source": "materials/Table.S6.xlsx",
+      "file": "table-s6.xlsx"
+    }
+  }
+}

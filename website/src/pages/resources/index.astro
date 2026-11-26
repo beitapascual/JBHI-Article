@@ -1,0 +1,51 @@
+---
+import Site from '../../layouts/Site.astro';
+import PageHead from '../../components/PageHead.astro';
+import Icon from '../../components/Icon.astro';
+import study from '../../data/study.json';
+import { route } from '../../data/figures';
+const citation = study.authors.join(', ') + '. ' + study.title + '. Manuscript.';
+---
+<Site title="Citation and resources" active="resources/">
+  <PageHead label="Research materials" title="Citation and resources" description="Cite the study, inspect the analysis scripts and find the supplementary data." />
+  <div class="wrap detail-grid">
+    <aside class="toc"><nav aria-label="Resources on this page"><strong>On this page</strong><a href="#citation">Citation</a><a href="#code">Code and materials</a><a href="#access">EEG data access</a></nav></aside>
+    <div class="reading">
+      <section class="reading-section" id="citation"><h2>Suggested citation</h2>
+        <blockquote class="citation" id="citation-text">{citation}</blockquote>
+        <p>Publication details and an article DOI are unavailable in the supplied sources. When citing a supplementary result, include its figure or table identifier and the corresponding repository file.</p>
+        <button class="button outline" type="button" data-copy hidden><Icon name="file" size={16} /> Copy citation</button><span class="copy-status" role="status"></span>
+        <h3>Affiliations</h3><ul class="bullets">{study.affiliations.map(value => <li>{value}</li>)}</ul>
+      </section>
+      <section class="reading-section" id="code"><h2>Code and supplementary data</h2>
+        <p>The repository provides scripts for preprocessing, span normalization, amplitude envelope correlation, graph metrics, paired statistics and plotting. It also includes aggregate tables and participant-level summaries. The repository links point to the materials and code on the main branch.</p>
+        <ul class="resource-list">
+          <li><a href={study.repository}>Supplementary-material repository</a></li>
+          <li><a href={study.repository + '/tree/' + study.revision + '/materials'}>Figures, tables and workbooks in the repository</a></li>
+          <li><a href={study.repository + '/tree/' + study.revision + '/code'}>Analysis scripts in the repository</a></li>
+          <li><a href={study.repository + '/blob/' + study.revision + '/website/docs/materials-guide.md'}>Supplementary materials guide</a></li>
+          <li><a href={route('figures/')}>Figure and table index</a></li>
+          <li><a href="https://medusabci.com/">MEDUSA platform</a></li>
+        </ul>
+        <p>Exact numerical reproduction requires the original EEG and confirmation of the metric aggregation procedure described in <a href={route('methods/#graph')}>Methods</a>.</p>
+      </section>
+      <section class="reading-section" id="access"><h2>Access to EEG recordings</h2><p>Raw and processed EEG recordings are subject to ethics and data-governance restrictions and are not distributed with the public repository. Researchers can contact the corresponding author with a justified request for review by the responsible ethics committee. Sharing depends on approval and applicable data-protection requirements.</p></section>
+    </div>
+  </div>
+<script>
+  const copy = document.querySelector<HTMLButtonElement>('[data-copy]');
+  if (copy && navigator.clipboard) {
+    copy.hidden = false;
+    copy.addEventListener('click', async () => {
+      const text = document.querySelector('#citation-text')?.textContent?.trim() || '';
+      const status = document.querySelector('.copy-status')!;
+      try {
+        await navigator.clipboard.writeText(text);
+        status.textContent = 'Citation copied.';
+      } catch {
+        status.textContent = 'Select the citation text to copy it.';
+      }
+    });
+  }
+</script>
+</Site>

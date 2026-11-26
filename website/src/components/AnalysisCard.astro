@@ -1,0 +1,22 @@
+---
+import Icon from './Icon.astro';
+import analyses from '../data/analyses.json';
+import { figures, route, science } from '../data/figures';
+const { analysis } = Astro.props as { analysis: typeof analyses[number] };
+const representative = analysis.figures.find((key) => figures[key].asset) ?? figures[analysis.figures[0]].fallback;
+const figureCount = analysis.figures.length;
+const verified = analysis.figures.filter((key) => figures[key].asset).length;
+const tableCount = analysis.tables.length;
+---
+<article class="analysis-card" data-filter-item data-category={analysis.category} data-search={[analysis.id, analysis.title, analysis.question, analysis.summary, analysis.keywords, analysis.category, ...analysis.figures, ...analysis.tables].join(' ')}>
+  <a class="card-thumb" href={route('analyses/' + analysis.slug + '/')} tabindex="-1" aria-hidden="true">
+    {representative && <img src={science(representative + '-thumb.webp')} alt="" width="620" height="340" loading="lazy" />}
+  </a>
+  <div class="card-body">
+    <div class="card-meta"><span class="eyebrow">{analysis.id}</span><span class="category">{analysis.category}</span></div>
+    <h3><a href={route('analyses/' + analysis.slug + '/')}>{analysis.title}</a></h3>
+    <p>{analysis.question}</p>
+    <p class="card-result">{analysis.summary}</p>
+    <div class="card-foot"><Icon name="layers" size={16} /><span>{verified === figureCount ? `${figureCount} ${figureCount === 1 ? 'figure' : 'figures'}` : `${figureCount} indexed figures`}{tableCount ? ` · ${tableCount} tables` : ''}</span></div>
+  </div>
+</article>

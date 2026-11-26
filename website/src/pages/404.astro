@@ -1,0 +1,8 @@
+---
+import Site from '../layouts/Site.astro';
+import PageHead from '../components/PageHead.astro';
+import { route } from '../data/figures';
+---
+<Site title="Page unavailable">
+  <PageHead label="404" title="Page unavailable" description="Find the study overview or browse the figure and table index."><div class="actions"><a class="button outline" href={route()}>Study overview</a><a class="button outline" href={route('figures/')}>Figures and tables</a></div></PageHead>
+</Site>

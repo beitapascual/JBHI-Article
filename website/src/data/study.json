@@ -1,0 +1,51 @@
+{
+  "title": "Dynamic and robust EEG functional connectivity biomarkers of cognitive load across age groups",
+  "authors": ["Beatriz Pascual-Roa", "Eduardo Santamaría-Vázquez", "Diego Marcos-Martínez", "C. Rubén Ruiz-Gálvez", "Víctor Martínez-Cagigal", "Roberto Hornero"],
+  "affiliations": ["Biomedical Engineering Group, University of Valladolid, Valladolid, Spain", "Centro de Investigación en Red en Bioingeniería, Biomateriales y Nanomedicina (CIBER-BBN), Spain"],
+  "repository": "https://github.com/beitapascual/JBHI-Article",
+  "revision": "main",
+  "question": "How does EEG functional connectivity change as a person encodes more items relative to their own visuospatial memory span?",
+  "cohortLabels": { "older": "Older-adult cohort", "young": "Young-adult cohort" },
+  "cohortData": [
+    ["Analyzed participants", "60", "21"],
+    ["Age, years (mean ± SD)", "70.37 ± 2.85", "24.47 ± 4.17"],
+    ["Sex (men / women)", "16 / 44", "9 / 12"],
+    ["Sessions scheduled per participant", "9", "2"],
+    ["Recordings retained", "1,043", "42"],
+    ["Successful trials / total trials", "7,323 / 10,686 (68.53%)", "675 / 799 (84.48%)"],
+    ["Mean items recalled (mean ± SD)", "4.83 ± 1.11", "6.23 ± 0.91"],
+    ["Acquisition", "g.Nautilus PRO • 250 Hz", "g.USBamp • 256 Hz"],
+    ["Acquisition reference", "Right mastoid", "Right earlobe"],
+    ["Task start / maximum length", "2 / 9 items", "4 / 9 items"]
+  ],
+  "findings": [
+    {
+      "id": "older",
+      "title": "Complexity increased with relative demand",
+      "summary": "Every pairwise Shannon complexity comparison reached adjusted significance across all five bands and both regions in the older-adult cohort (N = 60).",
+      "context": "The older-adult cohort was used for methodological development. Comparing clean epochs from successful trials tests class-related changes during encoding with correct recall.",
+      "interpretation": "Higher Shannon graph complexity indicates a change in the heterogeneity of AEC edge weights. The consistency of the contrasts supports sensitivity to task-defined within-participant demand.",
+      "scope": "The class labels combined serial position and behavioral span. Class 4 describes the highest relative task position rather than an independently verified state of overload.",
+      "figures": ["f3"]
+    },
+    {
+      "id": "young",
+      "title": "An independent cohort showed a partial pattern",
+      "summary": "The frontal alpha band distinguished all class pairs with large effects. Other bands and regions showed a less uniform pattern.",
+      "context": "The same framework was applied independently to the young-adult cohort (N = 21). Significant contrasts occurred in both regions and all five bands, with some class pairs remaining inconclusive.",
+      "interpretation": "The results in the young-adult cohort show that class-dependent patterns can be detected under a different experimental setup, with frontal alpha providing the clearest separation across all four classes.",
+      "scope": "The smaller sample may limit power and precision. Differences in hardware, task rules, montage and acquisition reference prevent attributing cohort differences to age.",
+      "figures": ["f4"]
+    },
+    {
+      "id": "network",
+      "label": "Network measures",
+      "title": "Complementary metrics describe different network properties",
+      "summary": "Strength, path length, clustering and modularity put the Shannon complexity result in the context of the weighted network.",
+      "context": "The manuscript places all five metrics together by frequency, region and relative class. Companion analyses explore the distributions and community organization.",
+      "interpretation": "The summaries show different aspects of connectivity: cumulative strength, weighted routes, local triangles, community organization and edge-weight heterogeneity. Modularity in the older-adult cohort differed between C4 and the three lower classes across bands and regions.",
+      "scope": "Weighted modularity shares sensitivity to edge strength with Shannon complexity. The connectivity data do not establish the mechanism that produced the patterns.",
+      "figures": ["f5", "f6"]
+    }
+  ]
+}

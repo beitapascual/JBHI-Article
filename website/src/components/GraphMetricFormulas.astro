@@ -1,0 +1,44 @@
+---
+import Equation from './Equation.astro';
+---
+<p>The five definitions below follow equations 2–7 of the manuscript. <Equation tex={String.raw`A_{ij}`} display={false} /> is the orthogonalized AEC weight between EEG channels i and j, with self-connections set to zero.</p>
+<dl class="definitions">
+  <div>
+    <dt>Node strength</dt>
+    <dd>
+      <Equation tex={String.raw`k_i=\sum_j A_{ij}`} />
+      <p>Sum of the connectivity weights incident on node i.</p>
+    </dd>
+  </div>
+  <div>
+    <dt>Characteristic path length</dt>
+    <dd>
+      <Equation tex={String.raw`\mathrm{CPL}_i=\frac{1}{N-1}\sum_{j\ne i} d_{ij}`} />
+      <p>N is the number of nodes and <Equation tex={String.raw`d_{ij}`} display={false} /> is the shortest weighted path length between i and j after converting connectivity weights to distances.</p>
+    </dd>
+  </div>
+  <div>
+    <dt>Weighted clustering coefficient</dt>
+    <dd>
+      <Equation tex={String.raw`\mathrm{CC}_i=\frac{\sum_{j\ne i}\sum_{h\notin\{i,j\}}(A_{ij}A_{ih}A_{jh})^{1/3}}{d_i(d_i-1)}`} />
+      <Equation tex={String.raw`d_i=\sum_{j\ne i}\mathbf{1}(A_{ij}>0)`} />
+      <p>dᵢ counts neighbours with positive connection weight. Each triangle contributes the geometric mean of its three edge weights. The coefficient is zero when dᵢ is less than two.</p>
+    </dd>
+  </div>
+  <div>
+    <dt>Weighted modularity</dt>
+    <dd>
+      <Equation tex={String.raw`Q=\frac{1}{2m}\sum_{i,j}\left(A_{ij}-\gamma\frac{s_i s_j}{2m}\right)\delta(c_i,c_j)`} />
+      <Equation tex={String.raw`s_i=\sum_j A_{ij},\qquad 2m=\sum_{i,j}A_{ij}`} />
+      <p>sᵢ is node strength, cᵢ is community membership, and δ equals one when two nodes belong to the same community and zero otherwise. The study used resolution γ = 1 and fixed region masks across conditions.</p>
+    </dd>
+  </div>
+  <div>
+    <dt>Shannon graph complexity</dt>
+    <dd>
+      <Equation tex={String.raw`p_i=\frac{w_i}{\sum_{j=1}^{T}w_j},\qquad H=-\frac{\sum_{i=1}^{T}p_i\log_2 p_i}{\log_2 T}`} />
+      <Equation tex={String.raw`C_G=H\sqrt{\frac{1}{T-1}}\,\sigma_w`} />
+      <p>wᵢ is an upper-triangle edge weight, <Equation tex={String.raw`\sigma_w`} display={false} /> is the standard deviation of those weights, and H is normalized Shannon entropy. The diagonal is excluded and a zero probability contributes zero to entropy. A 16-channel network has T = 120 unique edge positions before masking.</p>
+    </dd>
+  </div>
+</dl>

@@ -1,0 +1,45 @@
+---
+import Icon from './Icon.astro';
+import { figureLabel, figures, original, route, science } from '../data/figures';
+const { id } = Astro.props;
+const figure = figures[id];
+const { asset } = figure;
+const label = figureLabel(id);
+const title = label + ' · ' + figure.title;
+const captionId = id + '-caption';
+const kind = id === 'f1' ? 'Timeline of encoding, retention and response.' : id === 'f2' ? 'Side-by-side diagrams compare span-relative and absolute length labels.'
+  : ['s9','s10'].includes(id) ? 'Four heatmaps show clean-epoch counts by sequence length and serial position.'
+  : ['s11','s12','s13','s14','s15'].includes(id) ? 'Paired columns of boxplots show frontal and parietal complexity across lengths.'
+  : id === 's16' ? 'Boxplots and participant dots show bootstrap correlations for four classes.'
+  : id === 's17' ? 'Solid and hatched violins show distributions before and after ICA.'
+  : id === 's18' ? 'Grouped bars compare Wilcoxon effect sizes before and after ICA.'
+  : ['f5','f6'].includes(id) ? 'Five panels summarize graph metric distributions by region, band and class.'
+  : 'Violin plots and matrices show participant distributions, adjusted p values and effect sizes by band and region.';
+const alt = figure.title + '. ' + kind;
+const notes = figure.fallback
+  ? 'Figure unavailable in the verified source set. The linked manuscript overview contains comparable descriptive panels.'
+  : null;
+---
+<figure class="scientific-figure" id={id}>
+  {asset ? (
+    <>
+      <header><span class="eyebrow">{label}</span><h3>{figure.title}</h3></header>
+      <a class="figure-image" href={science(asset.file)} data-viewer data-title={title} data-alt={alt} data-caption={captionId} aria-label={`Enlarge ${title}`}>
+        <img src={science(id + '.webp')} alt={alt} width={asset.previewWidth} height={asset.previewHeight} loading="lazy" decoding="async" />
+        <span class="zoom-icon"><Icon name="zoom" size={18} /></span>
+      </a>
+      <figcaption id={captionId}>{figure.caption}</figcaption>
+      <div class="asset-actions">
+        <a href={science(asset.file)} download><Icon name="download" size={16} /> Download full resolution</a>
+        {asset.source && <a href={original(asset.source)}>Original repository file</a>}
+      </div>
+    </>
+  ) : (
+    <div class="unavailable">
+      <span class="eyebrow">{label} · Asset unavailable</span>
+      <h3>{figure.title}</h3>
+      <p>{notes}</p>
+      <a href={route('findings/#' + figure.fallback)}>View manuscript {figureLabel(figure.fallback!)}</a>
+    </div>
+  )}
+</figure>

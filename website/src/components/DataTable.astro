@@ -1,0 +1,15 @@
+---
+const { title, caption, heading, rows } = Astro.props as {
+  title: string;
+  caption?: string;
+  heading: string[];
+  rows: (number | string | null)[][];
+};
+---
+<div class="table-scroll" tabindex="0" role="region" aria-label={title}>
+  <table>
+    <caption>{title}{caption && <span>{caption}</span>}</caption>
+    <thead><tr>{heading.map((value) => <th scope="col">{value}</th>)}</tr></thead>
+    <tbody>{rows.map(([rowTitle,...cells]) => <tr><th scope="row">{rowTitle}</th>{cells.map(cell => <td>{cell ?? '—'}</td>)}</tr>)}</tbody>
+  </table>
+</div>

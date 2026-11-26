@@ -1,0 +1,106 @@
+---
+import Site from '../layouts/Site.astro';
+import Icon from '../components/Icon.astro';
+import AnalysisCard from '../components/AnalysisCard.astro';
+import DataTable from '../components/DataTable.astro';
+import study from '../data/study.json';
+import analyses from '../data/analyses.json';
+import { route, science } from '../data/figures';
+const metrics = [['users','81','Participants'],['layers','2','Independent cohorts'],['pulse','5','Frequency bands'],['clock','1 s','Stimulus-aligned EEG']];
+const steps = [
+  ['Corsi task','Participants encode and recall visuospatial sequences of increasing length.'],
+  ['Relative demand','Each item is labelled by its position relative to the participant’s estimated Corsi span.'],
+  ['EEG connectivity','Pairwise orthogonalized AEC estimates weighted connectivity from clean, one-second encoding epochs.'],
+  ['Paired inference','Graph measures are examined by class, band and region, with within-participant comparisons in each cohort.']
+];
+---
+<Site title="Study overview">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <div class="eyebrow ruled">Research companion</div>
+        <h1>{study.title}<span class="hero-subtitle">Evaluation in two independent cohorts</span></h1>
+        <p>How does brain connectivity change as visuospatial memory demands approach an individual’s capacity? Explore the evidence from an item-by-item EEG analysis of the Corsi Block-Tapping Test.</p>
+        <div class="actions">
+          <a href={route('findings/')} class="button primary">Explore main findings</a>
+          <a href={route('analyses/')} class="button ghost">Supplementary analyses</a>
+        </div>
+        <a href="#authors" class="hero-authors">Beatriz Pascual-Roa and colleagues · University of Valladolid</a>
+      </div>
+      <section class="hero-figure" aria-labelledby="hero-figure-title">
+        <div class="hero-figure-inner">
+          <div class="exhibit-head"><span class="eyebrow" data-exhibit-number>Figure 3</span><span class="exhibit-chip">Manuscript figure</span></div>
+          <h2 id="hero-figure-title">Shannon graph complexity</h2>
+          <div class="exhibit-switch" role="group" aria-label="Select a cohort" hidden>
+            <button type="button" data-cohort="older" data-asset={science('f3.webp')} data-target={route('findings/#f3')} aria-pressed="true">{study.cohortLabels.older}</button>
+            <button type="button" data-cohort="young" data-asset={science('f4.webp')} data-target={route('findings/#f4')} aria-pressed="false">{study.cohortLabels.young}</button>
+          </div>
+          <a href={route('findings/#f3')} class="exhibit-art" data-exhibit-link aria-label="Read the Figure 3 caption and results">
+            <img src={science('f3.webp')} width="1450" height="1231" alt="Figure 3. Shannon graph complexity distributions and paired comparisons in the older-adult cohort." fetchpriority="high" data-exhibit-image />
+          </a>
+          <div class="exhibit-footer"><span>Frontal and parietal regions · Five EEG bands</span><a href={route('findings/#f3')} data-exhibit-link>View figure</a></div>
+        </div>
+      </section>
+    </div>
+  </section>
+  <section class="stats-strip" aria-label="Study at a glance">
+    <dl class="wrap stat-grid">
+      {metrics.map(([icon, value, label]) => <div class="stat"><div class="stat-icon"><Icon name={icon} size={21} /></div><div><dt>{value}</dt><dd>{label}</dd></div></div>)}
+    </dl>
+  </section>
+  <section class="wrap section" aria-labelledby="evidence">
+    <div class="eyebrow ruled">Main findings</div>
+    <div class="section-heading"><h2 id="evidence">What the evidence shows</h2><a href={route('findings/')} class="text-link">All main findings</a></div>
+    <div class="findings-grid">
+      {study.findings.map((finding) => <article class="finding-card">
+        <span class="eyebrow">{finding.id === 'network' ? finding.label : study.cohortLabels[finding.id as 'older' | 'young']}</span><h3><a href={route('findings/#' + finding.id)}>{finding.title}</a></h3><p>{finding.summary}</p>
+      </article>)}
+    </div>
+  </section>
+  <section class="section tint">
+    <div class="wrap">
+      <div class="eyebrow ruled">Study design</div>
+      <div class="section-heading"><h2>From sequence to network</h2><a href={route('methods/')} class="text-link">Read the methods</a></div>
+      <p class="lede">{study.question} The framework combines item-level timing, capacity normalization and graph measures to address this question in two independently analysed cohorts.</p>
+      <ol class="steps">
+        {steps.map(([title, description], index) => <li><span aria-hidden="true">{index + 1}</span><h3>{title}</h3><p>{description}</p></li>)}
+      </ol>
+      <DataTable title="Cohort characteristics" caption="The cohorts used different acquisition setups and task progression rules." heading={['Characteristic', study.cohortLabels.older, study.cohortLabels.young]} rows={study.cohortData.slice(0,7)} />
+    </div>
+  </section>
+  <section class="wrap section">
+    <div class="eyebrow ruled">Supplementary evidence</div>
+    <div class="section-heading"><h2>Explore the methodological checks</h2><a href={route('analyses/')} class="text-link">All 7 analyses</a></div>
+    <div class="analysis-grid">{[analyses[0], analyses[5], analyses[6]].map(analysis => <AnalysisCard {analysis} />)}</div>
+  </section>
+  <section class="section tint authors" id="authors">
+    <div class="wrap">
+      <div class="eyebrow ruled">Authorship</div>
+      <h2>Authors and affiliations</h2>
+      <p>{study.authors.join(' · ')}</p>
+      <ul>{study.affiliations.map(value => <li>{value}</li>)}</ul>
+      <a href={route('resources/')} class="text-link">Citation and research resources</a>
+    </div>
+  </section>
+<script>
+  const switcher = document.querySelector<HTMLElement>('.exhibit-switch');
+  if (switcher) {
+    const buttons = [...switcher.querySelectorAll<HTMLButtonElement>('button')];
+    const img = document.querySelector<HTMLImageElement>('[data-exhibit-image]')!;
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-exhibit-link]')];
+    const badge = document.querySelector<HTMLElement>('[data-exhibit-number]')!;
+    buttons.forEach(button => button.addEventListener('click', () => {
+      const young = button.dataset.cohort === 'young';
+      const num = young ? 4 : 3;
+      const cohort = button.textContent?.trim().toLowerCase();
+      buttons.forEach(choice => choice.setAttribute('aria-pressed', String(choice === button)));
+      badge.textContent = 'Figure ' + num;
+      img.src = button.dataset.asset!;
+      img.alt = `Figure ${num}. Shannon graph complexity distributions and paired comparisons in the ${cohort}.`;
+      links.forEach(link => link.href = button.dataset.target!);
+      links[0].setAttribute('aria-label', `Read the Figure ${num} caption and results`);
+    }));
+    switcher.hidden = false;
+  }
+</script>
+</Site>

@@ -1,0 +1,19 @@
+---
+import Site from '../../layouts/Site.astro';
+import PageHead from '../../components/PageHead.astro';
+import AnalysisCard from '../../components/AnalysisCard.astro';
+import FilterBar from '../../components/FilterBar.astro';
+import analyses from '../../data/analyses.json';
+import { route } from '../../data/figures';
+const categories = [...new Set(analyses.map(analysis => analysis.category))];
+---
+<Site title="Supplementary analyses" active="analyses/">
+  <PageHead label="Supplementary evidence" title="Supplementary analyses" description="Explore how task design, trial selection, alternative network metrics and sensitivity checks inform the main findings.">
+    <div class="head-stats"><span><b>{analyses.length}</b> analyses</span><a href={route('figures/')}><b>18</b> figure records</a><a href={route('figures/')}><b>6</b> supplementary tables</a></div>
+  </PageHead>
+  <section class="wrap section browse-section" aria-label="Search supplementary analyses" data-filter-scope>
+    <FilterBar {categories} placeholder="Search analyses" noun="analyses" count={analyses.length} />
+    <div class="analysis-grid">{analyses.map(analysis => <AnalysisCard {analysis} />)}</div>
+    <div class="empty" data-filter-empty hidden><h2>No matching analyses</h2><button type="button" class="button outline" data-filter-reset>Clear filters</button></div>
+  </section>
+</Site>

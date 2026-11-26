@@ -1,0 +1,8 @@
+---
+import Icon from './Icon.astro';
+const { title, tone = 'conclusion' } = Astro.props;
+---
+<div class:list={['callout', tone]}>
+  <Icon name={tone === 'scope' ? 'circle' : 'pulse'} />
+  <div><h3>{title}</h3><slot /></div>
+</div>

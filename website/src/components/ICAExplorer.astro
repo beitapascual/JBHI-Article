@@ -1,0 +1,41 @@
+---
+import effects from '../data/ica-effects.json';
+const contrasts = [...new Set(effects.map(row => row.contrast))];
+const bands = [...new Set(effects.map(row => row.band))];
+---
+<div class="interactive-panel" data-ica>
+  <h3>Explore paired ICA effect sizes</h3>
+  <p>Compare original and corrected Wilcoxon r on a common 0–1 scale. The six class contrasts come from the published supplementary workbook. Adjusted p values use 60 tests per pipeline.</p>
+  <div class="selects" data-ica-controls hidden>
+    <label>Class contrast<select data-ica-contrast>{contrasts.map((value) => <option value={value} selected={value === 'CL4-CL1'}>{value.replaceAll('CL', 'C').replace('-', ' vs ')}</option>)}</select></label>
+    <label>Frequency band<select data-ica-band><option>All bands</option>{bands.map(value => <option>{value}</option>)}</select></label>
+  </div>
+  <div class="table-scroll" tabindex="0" role="region" aria-label="ICA effect-size values">
+    <table>
+      <thead><tr><th scope="col">Band and region</th><th scope="col">Original r</th><th scope="col">ICA r</th><th scope="col">Original adjusted p</th><th scope="col">ICA adjusted p</th></tr></thead>
+      <tbody>
+        {effects.map(row => <tr data-contrast={row.contrast} data-band={row.band} hidden={row.contrast !== 'CL4-CL1'}>
+          <th scope="row">{row.band} · {row.region}</th>
+          <td><span class="rbar"><i aria-hidden="true" style={`width:${row.original * 100}%`}></i></span>{row.original.toFixed(3)}</td>
+          <td><span class="rbar alt"><i aria-hidden="true" style={`width:${row.corrected * 100}%`}></i></span>{row.corrected.toFixed(3)}</td>
+          <td>{row.adjustedOriginal.toExponential(2)}</td><td>{row.adjustedCorrected.toExponential(2)}</td>
+        </tr>)}
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+  const explorer = document.querySelector<HTMLElement>('[data-ica]');
+  if (explorer) {
+    const contrast = explorer.querySelector<HTMLSelectElement>('[data-ica-contrast]')!;
+    const band = explorer.querySelector<HTMLSelectElement>('[data-ica-band]')!;
+    const rows = [...explorer.querySelectorAll<HTMLTableRowElement>('[data-contrast]')];
+    const update = () => rows.forEach(row => {
+      row.hidden = row.dataset.contrast !== contrast.value || (band.value !== 'All bands' && row.dataset.band !== band.value);
+    });
+    contrast.addEventListener('change', update);
+    band.addEventListener('change', update);
+    explorer.querySelector<HTMLElement>('[data-ica-controls]')!.hidden = false;
+    update();
+  }
+</script>

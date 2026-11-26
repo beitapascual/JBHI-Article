@@ -1,0 +1,50 @@
+---
+import Icon from './Icon.astro';
+const { categories, placeholder, noun, count } = Astro.props as { categories: string[]; placeholder: string; noun: string; count: number };
+---
+<div class="filter-controls" data-controls hidden>
+  <div class="filters">
+    <div class="chips" role="group" aria-label="Filter by category">
+      {['All', ...categories].map(category => <button class="chip" type="button" data-filter={category} aria-pressed={category === 'All' ? 'true' : 'false'}>{category}</button>)}
+    </div>
+    <label class="search"><Icon name="search" size={18} /><span class="sr-only">{placeholder}</span><input type="search" placeholder={placeholder} data-query /></label>
+  </div>
+  <p class="filter-status" role="status" data-filter-status data-noun={noun}>{count} {noun}</p>
+</div>
+<script>
+  document.querySelectorAll<HTMLElement>('[data-controls]').forEach((controls) => {
+    const scope = controls.closest('[data-filter-scope]');
+    if (!scope) return;
+    const items = [...scope.querySelectorAll<HTMLElement>('[data-filter-item]')];
+    const buttons = [...controls.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const input = controls.querySelector<HTMLInputElement>('[data-query]')!;
+    const status = controls.querySelector<HTMLElement>('[data-filter-status]')!;
+    const empty = scope.querySelector<HTMLElement>('[data-filter-empty]');
+    let selection = 'All';
+    const normalize = (value: string) => value.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    const update = () => {
+      const words = normalize(input.value).trim().split(/\s+/).filter(Boolean);
+      let match = 0;
+      for (const item of items) {
+        const inCategory = selection === 'All' || item.dataset.category === selection;
+        const text = normalize(item.dataset.search || '');
+        item.hidden = !(inCategory && words.every(word => text.includes(word)));
+        if (!item.hidden) match++;
+      }
+      status.textContent = `Showing ${match} of ${items.length} ${status.dataset.noun}`;
+      if (empty) empty.hidden = match > 0;
+    };
+    buttons.forEach(button => button.addEventListener('click', () => {
+      selection = button.dataset.filter || 'All';
+      buttons.forEach(entry => entry.setAttribute('aria-pressed', String(entry === button)));
+      update();
+    }));
+    input.addEventListener('input', update);
+    scope.querySelector('[data-filter-reset]')?.addEventListener('click', () => {
+      input.value = '';
+      buttons[0]?.click();
+      input.focus();
+    });
+    controls.hidden = false;
+  });
+</script>

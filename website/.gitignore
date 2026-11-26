@@ -1,0 +1,9 @@
+/node_modules/
+/dist/
+/.astro/
+
+# Generated from ../materials by scripts/prepare_materials.py
+/public/science/
+/src/data/assets.json
+/src/data/tables.json
+/src/data/ica-effects.json

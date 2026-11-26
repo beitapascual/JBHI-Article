@@ -1,0 +1,76 @@
+---
+import Site from '../../layouts/Site.astro';
+import Figure from '../../components/Figure.astro';
+import Callout from '../../components/Callout.astro';
+import DataTable from '../../components/DataTable.astro';
+import GraphMetricFormulas from '../../components/GraphMetricFormulas.astro';
+import Icon from '../../components/Icon.astro';
+import ICAExplorer from '../../components/ICAExplorer.astro';
+import analyses from '../../data/analyses.json';
+import study from '../../data/study.json';
+import { original, route, science, tableLabel, tableNotes, tables } from '../../data/figures';
+export function getStaticPaths() {
+  return analyses.map(analysis => ({ params: { slug: analysis.slug }, props: { analysis } }));
+}
+const { analysis } = Astro.props;
+const sections = [['question','Scientific question'],['motivation','Motivation'],['method','Methods'],['results','Results'],['interpretation','Interpretation'],['conclusions','Conclusions'],['limitations','Limitations'],['related','Related evidence']];
+const position = analyses.indexOf(analyses.find(item => item.slug === analysis.slug)!);
+const olderFirst = analysis.slug === 'epoch-distribution';
+const ordered = olderFirst ? ['table-s1','table-s2','s9','table-s3','table-s4','s10'] : [...analysis.figures, ...analysis.tables];
+---
+<Site title={analysis.title} active="analyses/" description={analysis.question}>
+  <header class="page-head">
+    <div class="wrap">
+      <nav class="breadcrumb" aria-label="Breadcrumb"><a href={route('analyses/')}>Supplementary analyses</a><span aria-hidden="true">/</span><span>{analysis.id}</span></nav>
+      <span class="eyebrow ruled">{analysis.category}</span>
+      <h1>{analysis.title}</h1><p class="lede">{analysis.summary}</p>
+    </div>
+  </header>
+  <div class="wrap detail-grid">
+    <aside class="toc"><nav aria-label="Sections in this analysis"><strong>On this page</strong>{sections.map(([id, label]) => <a href={'#' + id}>{label}</a>)}</nav></aside>
+    <div class="reading">
+      <section class="reading-section" id="question"><h2>Scientific question</h2><p class="standfirst">{analysis.question}</p></section>
+      <section class="reading-section" id="motivation"><h2>Motivation and rationale</h2><p>{analysis.motivation}</p></section>
+      <section class="reading-section" id="method">
+        <h2>Methods</h2>
+        <p>{analysis.methods}</p>
+        {analysis.slug === 'graph-metrics' && (
+          <details class="graph-formulas">
+            <summary>Graph metric formulas</summary>
+            <GraphMetricFormulas />
+          </details>
+        )}
+      </section>
+      <section class="reading-section" id="results">
+        <h2>Results</h2><p>{analysis.results}</p>
+        {ordered.map(id => id.startsWith('table-') ? (
+          <section class="table-block" id={id}>
+            <span class="eyebrow">{tableLabel(id)}</span>
+            <DataTable title={tableNotes[id].title} caption={tableNotes[id].caption} heading={tables[id].heading!} rows={tables[id].rows!} />
+            <div class="asset-actions"><a href={science(tables[id].file)} download><Icon name="download" size={16} /> Download {tables[id].file.split('.').pop()?.toUpperCase()}</a><a href={original(tables[id].source)}>Repository file</a></div>
+          </section>
+        ) : <Figure {id} />)}
+        {analysis.slug === 'ica-sensitivity' && <ICAExplorer />}
+      </section>
+      <section class="reading-section" id="interpretation"><h2>Interpretation</h2><p>{analysis.interpretation}</p></section>
+      <section class="reading-section" id="conclusions"><Callout title="Key conclusion"><p>{analysis.conclusion}</p></Callout></section>
+      <section class="reading-section" id="limitations"><Callout title="Limitations and considerations" tone="scope"><p>{analysis.limitations}</p></Callout></section>
+      <section class="reading-section" id="related">
+        <h2>Related analyses and resources</h2>
+        <ul class="resource-list">
+          {analysis.downloads.map(id => <li><a href={science(tables[id].file)} download>{tableNotes[id].title} (XLSX)</a><p>{tableNotes[id].caption}</p><a href={original(tables[id].source)}>Original repository workbook</a></li>)}
+          {analysis.related.map(slug => {
+            const related = analyses.find(item => item.slug === slug)!;
+            return <li><a href={route('analyses/' + slug + '/')}>{related.title}</a><p>{related.question}</p></li>;
+          })}
+          <li><a href={route('methods/#' + analysis.methodAnchor)}>{analysis.manuscript}</a><p>Relevant manuscript sections and the study methods.</p></li>
+          <li><a href={study.repository + '/tree/' + study.revision + '/code'}>Public analysis scripts</a><p>Preprocessing, relative labels, AEC, graph metrics, participant-level statistics and plotting.</p></li>
+        </ul>
+      </section>
+      <nav class="correspondence" aria-label="Adjacent analyses">
+        {position > 0 && <a href={route('analyses/' + analyses[position-1].slug + '/')}><small>Previous analysis</small>{analyses[position-1].title}</a>}
+        {position < analyses.length - 1 && <a href={route('analyses/' + analyses[position+1].slug + '/')}><small>Next analysis</small>{analyses[position+1].title}</a>}
+      </nav>
+    </div>
+  </div>
+</Site>

@@ -1,0 +1,33 @@
+---
+import Site from '../../layouts/Site.astro';
+import Figure from '../../components/Figure.astro';
+import PageHead from '../../components/PageHead.astro';
+import Callout from '../../components/Callout.astro';
+import study from '../../data/study.json';
+import { route } from '../../data/figures';
+---
+<Site title="Main findings" active="findings/">
+  <PageHead label="Results" title="Main findings" description="Trace the relationship between relative visuospatial memory demand and EEG connectivity across the two independently analysed cohorts." />
+  <div class="wrap detail-grid">
+    <aside class="toc"><nav aria-label="Findings on this page"><strong>On this page</strong>{study.findings.map(finding => <a href={'#' + finding.id}>{finding.id === 'network' ? finding.label : study.cohortLabels[finding.id as 'older' | 'young']}</a>)}<a href="#study-scope">Study limitations</a></nav></aside>
+    <div class="reading">
+      {study.findings.map(finding => <section class="reading-section" id={finding.id}>
+        <div class="eyebrow">{finding.id === 'network' ? finding.label : study.cohortLabels[finding.id as 'older' | 'young']}</div><h2>{finding.title}</h2><p class="standfirst">{finding.summary}</p><p>{finding.context}</p>
+        {finding.figures.map(id => <Figure {id} />)}
+        {finding.id === 'older' && <p>Figure 3 shows the clearest separation near the top of the relative span. The medians do not rise at every adjacent class step. Effect sizes were mostly large, with some contrasts below the conventional r &gt; 0.5 threshold.</p>}
+        <h3>Interpretation</h3><p>{finding.interpretation}</p>
+        <Callout tone="scope" title="Scope of inference"><p>{finding.scope}</p></Callout>
+      </section>)}
+      <section class="reading-section" id="study-scope">
+        <h2>Study limitations</h2>
+        <ul class="bullets">
+          <li>The labels capture position relative to observed span. Independent subjective workload ratings were unavailable, and within-sequence order, fatigue and performance can contribute to the signal.</li>
+          <li>The larger older-adult cohort was used for development. The smaller young-adult cohort provides independent evidence with different protocols. The analyses were paired within cohorts, and the study did not estimate an age effect.</li>
+          <li>Sex and education were not modelled as covariates. Education was available only for the older-adult cohort. The two datasets do not span middle adulthood.</li>
+          <li>The analysis was offline. Predictive discrimination, online performance, and computational latency remain to be evaluated.</li>
+        </ul>
+        <a class="button outline" href={route('analyses/')}>Explore supplementary analyses</a>
+      </section>
+    </div>
+  </div>
+</Site>

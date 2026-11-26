@@ -1,0 +1,102 @@
+---
+import '@fontsource/dm-sans/latin-400.css';
+import '@fontsource/dm-sans/latin-500.css';
+import '@fontsource/dm-sans/latin-600.css';
+import '@fontsource/dm-sans/latin-700.css';
+import '@fontsource/newsreader/latin-500.css';
+import '@fontsource/newsreader/latin-500-italic.css';
+import '../styles/site.css';
+import Icon from '../components/Icon.astro';
+import study from '../data/study.json';
+import { route } from '../data/figures';
+const { title, description = 'Explore the findings, methodology and supplementary analyses of a two-cohort EEG functional-connectivity study.', active = '' } = Astro.props;
+const nav = [['Overview',''],['Main findings','findings/'],['Supplementary analyses','analyses/'],['Methods','methods/'],['Figures & tables','figures/']];
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content={description} />
+  <meta name="theme-color" content="#102b2b" />
+  <link rel="icon" href={route('favicon.svg')} type="image/svg+xml" />
+  <title>{title === 'Study overview' ? study.title : `${title} · Cognitive Load EEG`}</title>
+</head>
+<body>
+  <a href="#content" class="skip">Skip to content</a>
+  <header class="topbar">
+    <div class="wrap navshell">
+      <a href={route()} class="brand"><span class="brand-glyph"><Icon name="pulse" size={20} /></span><span>Cognitive Load <strong>EEG</strong></span></a>
+      <button type="button" class="navtoggle" aria-controls="site-nav" aria-expanded="false" aria-label="Toggle navigation" hidden><Icon name="menu" /></button>
+      <nav id="site-nav" aria-label="Primary">
+        {nav.map(([label,path]) => <a href={route(path)} aria-current={active === path ? 'page' : undefined}>{label}</a>)}
+        <a href={route('resources/')} class="nav-cite" aria-current={active === 'resources/' ? 'page' : undefined}><Icon name="file" size={15} /> Cite & resources</a>
+      </nav>
+    </div>
+  </header>
+  <main id="content"><slot /></main>
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <a href={route()} class="brand"><span class="brand-glyph"><Icon name="pulse" size={20} /></span><span>Cognitive Load <strong>EEG</strong></span></a>
+      <p>Biomedical Engineering Group · University of Valladolid · CIBER-BBN</p>
+      <div><a href={route('resources/')}>Citation & resources</a><a href={study.repository}>GitHub repository</a></div>
+    </div>
+  </footer>
+  <dialog id="figure-viewer" aria-labelledby="viewer-title">
+    <header class="viewer-head">
+      <strong id="viewer-title">Figure viewer</strong>
+      <div><button type="button" data-fit aria-pressed="true">Fit</button><button type="button" data-full aria-pressed="false">100%</button><a data-original download aria-label="Download figure"><Icon name="download" size={18} /></a><form method="dialog"><button aria-label="Close figure viewer"><Icon name="close" size={20} /></button></form></div>
+    </header>
+    <div class="viewer-stage" tabindex="0" aria-label="Scrollable image"><img alt="" /></div>
+    <p class="viewer-caption"></p>
+  </dialog>
+</body>
+</html>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('.navtoggle');
+  const nav = document.querySelector<HTMLElement>('#site-nav');
+  if (button && nav) {
+    button.hidden = false;
+    document.documentElement.classList.add('has-nav-toggle');
+    button.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', String(!open));
+      nav.classList.toggle('nav-open', !open);
+    });
+  }
+
+  const viewer = document.querySelector<HTMLDialogElement>('#figure-viewer');
+  if (viewer) {
+    const image = viewer.querySelector('img')!;
+    const download = viewer.querySelector<HTMLAnchorElement>('[data-original]')!;
+    const title = viewer.querySelector('#viewer-title')!;
+    const caption = viewer.querySelector('.viewer-caption')!;
+    const stage = viewer.querySelector('.viewer-stage')!;
+    const fit = viewer.querySelector<HTMLButtonElement>('[data-fit]')!;
+    const full = viewer.querySelector<HTMLButtonElement>('[data-full]')!;
+    function setScale(useFullSize: boolean) {
+      stage.classList.toggle('native-size', useFullSize);
+      fit.setAttribute('aria-pressed', String(!useFullSize));
+      full.setAttribute('aria-pressed', String(useFullSize));
+      stage.scrollTop = 0;
+      stage.scrollLeft = 0;
+    }
+    fit.addEventListener('click', () => setScale(false));
+    full.addEventListener('click', () => setScale(true));
+    document.querySelectorAll<HTMLAnchorElement>('[data-viewer]').forEach((link) => {
+      link.addEventListener('click', (event) => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || !viewer.showModal) return;
+        event.preventDefault();
+        title.textContent = link.dataset.title || 'Figure viewer';
+        caption.textContent = document.getElementById(link.dataset.caption || '')?.textContent?.trim() || '';
+        image.alt = link.dataset.alt || '';
+        image.src = link.href;
+        download.href = link.href;
+        setScale(false);
+        viewer.showModal();
+      });
+    });
+    viewer.addEventListener('close', () => image.removeAttribute('src'));
+  }
+</script>
